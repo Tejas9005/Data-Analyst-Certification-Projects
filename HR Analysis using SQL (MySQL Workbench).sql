@@ -201,5 +201,83 @@ end as comission_pct_status
 from
 employees
 
+Problem Statment - Write a query in SQL to display those employees who contain a letter z to their first name and also display 
+their last name, department, city, and state province.
+select 
+e.first_name, e.last_name, d.department_name, loc.city, loc.state_province
+from
+employees e left join
+departments d on e.department_id = d.department_id left join
+locations loc on d.location_id = loc.location_id
+where e.first_name like '%z%';
+
+Problem Statment - Write a query in SQL to display the job title, department id, full name (first and last name) of employee, starting date
+and end date for all the jobs which started on or after 1st January, 1993 and ending with on or before 31 August, 2000.
+select
+concat(e.first_name,' ', e.last_name) as full_name, e.department_id, j.job_title, jh.start_date, jh.end_date
+from
+employees e join
+jobs j on e.job_id = j.job_id join
+job_history jh on j.job_id = jh.job_id
+where jh.start_date >= '1993-01-01' and jh.end_date <='2000-08-31';
+
+select j.job_id,e.department_id, concat(e.first_name,' ',e.last_name) full_name, j.start_date , j.end_date from employees e 
+join job_history j on e.employee_id = j.employee_id
+where j.start_date >='1993-01-01' and end_date<='2000-08-31';
+
+Problem Statment - Display the employee number, name (first name and last name) and job title for all employees whose salary is smaller than 
+the minimum salary of those employees whose job title is Programmer using subquery
+select
+e.employee_id, concat(e.first_name, ' ', e.last_name) as employee_name, j.job_title, e.salary
+from
+employees e left join
+jobs j on e.job_id = j.job_id
+where 
+e.salary < (select min_salary from jobs where job_title = 'Programmer') 
+
+Problem Statment - Write a query in SQL to display the country name, city, and number of those departments where at least 2 employees are working.
+select 
+country_name, city, count(department_id) 
+from countries join 
+locations using (country_id) join 
+departments using (location_id)
+where 
+department_id in 
+(select department_id from employees group by department_id having COUNT(employee_id)>=2)group by country_name,city;
+
+Problem Statment - Write a query to fetch the employee ID, First Name, Last Name, Salary and Department ID of those employees 
+who draw a salary more than the average salary of their respective department. 
+select 
+employee_id, concat(first_name,' ',last_name) Name,salary,department_id 
+from employees o
+where salary > (select avg(salary) from employees i where o.department_id = i.department_id);
+
+Problem Statment - Write a query in SQL to display the first and last name, salary, and department ID for those employees who earn
+less than the average salary, and also work at the department where the employee Laura is working as a first name holder.
+select 
+first_name, last_name, salary, department_id
+from employees 
+where salary < (select avg(salary) from employees) and 
+department_id like (select department_id from employees where first_name like "Laura");
+
+Problem Statment - Using HR Schema, write a Query to find the maximum salary of the most recent job that every employee holds
+select
+concat(e.first_name, ' ' , e.last_name) as employee_name, e.employee_id, e.hire_date, j.max_salary
+from
+employees e left join
+jobs j on e.job_id = j.job_id
+order by j.max_salary desc;
+
+Problem Statment - Using HR Schema, write a Query to List the old designation and new designation of all the employees 
+in the company where old designation is not null. 
+select 
+distinct e.employee_id,e.first_name,e.last_name,e.job_id as current_job,
+j.job_id as old_job,jo.job_title as current
+from 
+employees as e inner join 
+job_history as j 
+on e.employee_id=j.employee_id inner join 
+jobs as jo on jo.job_id=e.job_id;
+
                                                           !! THANK YOU !!
 
